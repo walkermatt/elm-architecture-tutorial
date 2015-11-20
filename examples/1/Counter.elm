@@ -7,37 +7,42 @@ import Html.Events exposing (onClick)
 
 -- MODEL
 
-type alias Model = Int
+type alias Model = { value : Int, initial : Int, lower : Int, upper : Int }
 
 
 -- UPDATE
 
-type Action = Increment | Decrement
+type Action = Increment | Decrement | Reset
+
+clampValue model n =
+    clamp model.lower model.upper n
 
 update : Action -> Model -> Model
 update action model =
-  case action of
-    Increment ->
-      model + 1
-
-    Decrement ->
-      model - 1
+    let
+        clamp = clampValue model
+    in
+       case action of
+           Increment -> { model | value = (clamp (model.value + 1)) }
+           Decrement -> { model | value = (clamp (model.value - 1)) }
+           Reset -> { model | value = model.initial }
 
 
 -- VIEW
 
 view : Signal.Address Action -> Model -> Html
 view address model =
-  div []
-    [ button [ onClick address Decrement ] [ text "-" ]
-    , div [ countStyle ] [ text (toString model) ]
-    , button [ onClick address Increment ] [ text "+" ]
-    ]
+    div []
+        [ button [ onClick address Decrement ] [ text "-" ]
+        , div [ countStyle ] [ text (toString model.value) ]
+        , button [ onClick address Increment ] [ text "+" ]
+        , button [ onClick address Reset ] [ text "Reset" ]
+        ]
 
 
 countStyle : Attribute
 countStyle =
-  style
+    style
     [ ("font-size", "20px")
     , ("font-family", "monospace")
     , ("display", "inline-block")
