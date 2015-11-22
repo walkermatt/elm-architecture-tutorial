@@ -150,11 +150,9 @@ In example 1 we created a basic counter, but how does that pattern scale when we
 Wouldn't it be great if we could reuse all the code from example 1? The crazy thing about the Elm Architecture is that **we can reuse code with absolutely no changes**. When we created the `Counter` module in example one, it encapsulated all the implementation details so we can use them elsewhere:
 
 ```elm
-module Counter (Model, init, Action, update, view) where
+module Counter (Model, Action, update, view) where
 
 type Model
-
-init : Int -> Model
 
 type Action
 
@@ -163,7 +161,7 @@ update : Action -> Model -> Model
 view : Signal.Address Action -> Model -> Html
 ```
 
-Creating modular code is all about creating strong abstractions. We want boundaries which appropriately expose functionality and hide implementation. From outside of the `Counter` module, we just see a basic set of values: `Model`, `init`, `Action`, `update`, and `view`. We do not care at all how these things are implemented. In fact, it is *impossible* to know how these things are implemented. This means no one can rely on implementation details that were not made public.
+Creating modular code is all about creating strong abstractions. We want boundaries which appropriately expose functionality and hide implementation. From outside of the `Counter` module, we just see a basic set of values: `Model`, `Action`, `update`, and `view`. We do not care at all how these things are implemented. In fact, it is *impossible* to know how these things are implemented. This means no one can rely on implementation details that were not made public.
 
 So we can reuse our `Counter` module, but now we need to use it to create our `CounterPair`. As always, we start with a `Model`:
 
@@ -175,8 +173,8 @@ type alias Model =
 
 init : Int -> Int -> Model
 init top bottom =
-    { topCounter = Counter.init top
-    , bottomCounter = Counter.init bottom
+    { topCounter = top
+    , bottomCounter = bottom
     }
 ```
 
@@ -236,7 +234,7 @@ A pair of counters is cool, but what about a list of counters where we can add a
 Again we can reuse the `Counter` module exactly as it was in example 1 and 2!
 
 ```elm
-module Counter (Model, init, Action, update, view)
+module Counter (Model, Action, update, view)
 ```
 
 That means we can just get started on our `CounterList` module. As always, we begin with our `Model`:
@@ -271,7 +269,7 @@ update : Action -> Model -> Model
 update action model =
   case action of
     Insert ->
-      let newCounter = ( model.nextID, Counter.init 0 )
+      let newCounter = ( model.nextID, 0 )
           newCounters = model.counters ++ [ newCounter ]
       in
           { model |
@@ -337,7 +335,7 @@ Nah, it works.
 In this case our goals mean that we need a new way to view a `Counter` that adds a remove button. Interestingly, we can keep the `view` function from before and add a new `viewWithRemoveButton` function that provides a slightly different view of our underlying `Model`. This is pretty cool. We do not need to duplicate any code or do any crazy subtyping or overloading. We just add a new function to the public API to expose new functionality!
 
 ```elm
-module Counter (Model, init, Action, update, view, viewWithRemoveButton, Context) where
+module Counter (Model, Action, update, view, viewWithRemoveButton, Context) where
 
 ...
 
@@ -387,7 +385,7 @@ update action model =
   case action of
     Insert ->
       { model |
-          counters <- ( model.nextID, Counter.init 0 ) :: model.counters,
+          counters <- ( model.nextID, 0 ) :: model.counters,
           nextID <- model.nextID + 1
       }
 

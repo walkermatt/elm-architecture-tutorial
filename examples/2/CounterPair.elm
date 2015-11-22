@@ -16,8 +16,8 @@ type alias Model =
 
 init : Int -> Int -> Model
 init top bottom =
-    { topCounter = Counter.init top
-    , bottomCounter = Counter.init bottom
+    { topCounter = top
+    , bottomCounter = bottom
     }
 
 

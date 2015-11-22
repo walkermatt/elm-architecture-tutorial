@@ -36,7 +36,7 @@ update action model =
   case action of
     Insert ->
       { model |
-          counters = ( model.nextID, Counter.init 0 ) :: model.counters,
+          counters = ( model.nextID, 0 ) :: model.counters,
           nextID = model.nextID + 1
       }
 

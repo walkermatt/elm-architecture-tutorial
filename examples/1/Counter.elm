@@ -14,6 +14,7 @@ type alias Model = Int
 
 type Action = Increment | Decrement
 
+
 update : Action -> Model -> Model
 update action model =
   case action of

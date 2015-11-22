@@ -35,7 +35,7 @@ update : Action -> Model -> Model
 update action model =
   case action of
     Insert ->
-      let newCounter = ( model.nextID, Counter.init 0 )
+      let newCounter = ( model.nextID, 0 )
           newCounters = model.counters ++ [ newCounter ]
       in
           { model |
