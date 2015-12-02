@@ -80,9 +80,8 @@ view address model =
 
 viewCounter : Signal.Address Action -> ID -> Counter.Model -> Html
 viewCounter address id model =
-  let context =
-        Counter.Context
-          (Signal.forwardTo address (Modify id))
-          (Signal.forwardTo address (always (Remove id)))
+  let
+      remove = button [ onClick address (Remove id) ] [ text "x" ]
+      counter = Counter.view (Signal.forwardTo address (Modify id)) model
   in
-      Counter.viewWithRemoveButton context model
+     div [] [counter, remove]
